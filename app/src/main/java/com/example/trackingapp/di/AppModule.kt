@@ -2,7 +2,9 @@ package com.example.trackingapp.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.trackingapp.data.local.RunDAO
 import com.example.trackingapp.data.local.RunDatabase
+import com.example.trackingapp.data.repository.RunRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,5 +31,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideDao(runDb: RunDatabase) = runDb.getDao()
+
+    // Provide Repository
+    @Provides
+    @Singleton
+    fun provideRepository(dao: RunDAO) = RunRepository(dao)
 
 }
