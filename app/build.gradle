@@ -130,4 +130,7 @@ dependencies {
     // MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
+    implementation 'androidx.core:core-ktx:1.10.0-alpha02'
+
+
 }
