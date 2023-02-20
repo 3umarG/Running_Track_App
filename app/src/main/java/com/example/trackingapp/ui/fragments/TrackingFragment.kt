@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.trackingapp.R
 import com.example.trackingapp.databinding.FragmentTrackingBinding
-import com.example.trackingapp.di.Constants
+import com.example.trackingapp.utils.Constants
 import com.example.trackingapp.ui.base.services.TrackingService
 import com.example.trackingapp.ui.viewmodels.MainViewModel
 import com.google.android.gms.maps.GoogleMap
