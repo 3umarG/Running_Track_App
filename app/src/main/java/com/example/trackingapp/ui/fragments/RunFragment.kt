@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.trackingapp.R
 import com.example.trackingapp.databinding.FragmentRunBinding
-import com.example.trackingapp.di.Constants
+import com.example.trackingapp.utils.Constants
 import com.example.trackingapp.ui.viewmodels.MainViewModel
 import com.example.trackingapp.utils.TrackingUtility
 import dagger.hilt.android.AndroidEntryPoint
