@@ -1,7 +1,6 @@
 package com.example.trackingapp.ui.fragments
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +16,8 @@ import com.example.trackingapp.ui.viewmodels.MainViewModel
 import com.example.trackingapp.utils.Constants.CAMERA_ZOOM
 import com.example.trackingapp.utils.Constants.POLY_LINE_COLOR
 import com.example.trackingapp.utils.Constants.POLY_LINE_WIDTH
-import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -50,9 +47,47 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
         binding.mapView.getMapAsync {
             map = it
+            addAllPolyLines()
         }
 
         binding.btnToggleRun.setOnClickListener {
+            // That Control the function of Start or Resume the Service
+           toggleRunAction()
+        }
+
+        observeOnService()
+    }
+
+    private fun observeOnService() {
+        TrackingService.isStartTracking.observe(viewLifecycleOwner){
+            updateTrackingViewButtons(it)
+        }
+
+        // That Observer is fire and called when there is any changes in the path points in the service
+        // Depending on the location requests
+        TrackingService.pathPoints.observe(viewLifecycleOwner){
+            this.pathPoints = it
+            addLatestPolyLine()
+            moveCameraZoomToLastPos()
+        }
+    }
+
+    private fun updateTrackingViewButtons(isTracking : Boolean){
+        this.isTracking = isTracking
+        if(isTracking){
+            binding.btnToggleRun.text = "Stop"
+            binding.btnFinishRun.visibility = View.GONE
+        }else {
+            binding.btnToggleRun.text = "Start"
+            binding.btnFinishRun.visibility = View.VISIBLE
+        }
+
+    }
+
+    private fun toggleRunAction() {
+        if (isTracking){
+            sendCommandToService(Constants.SERVICE_ACTION_PAUSE)
+        }else {
             sendCommandToService(Constants.SERVICE_ACTION_START_OR_RESUME)
         }
     }
