@@ -50,7 +50,7 @@ class TrackingService : LifecycleService() {
          *
          * we can use Broadcast Receivers but this way more easy and can handle.
          */
-        val isStartTracking = MutableLiveData<Boolean>()
+        val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<PolyLinesPoints>()
     }
 
@@ -58,7 +58,7 @@ class TrackingService : LifecycleService() {
      * at the start of my service i want to post these initial values to live data.
      */
     private fun postInitialValues() {
-        isStartTracking.postValue(false)
+        isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
     }
 
@@ -67,7 +67,7 @@ class TrackingService : LifecycleService() {
         postInitialValues()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        isStartTracking.observe(this) {
+        isTracking.observe(this) {
             updateLocationTracking(it)
         }
     }
@@ -76,10 +76,13 @@ class TrackingService : LifecycleService() {
         when (intent.action!!) {
             Constants.SERVICE_ACTION_START_OR_RESUME -> {
                 if (isFirstStarted) {
+                    // Start
                     startForegroundService()
                     isFirstStarted = false
                     Toast.makeText(this, "Start New Service", Toast.LENGTH_LONG).show()
                 } else {
+                    // Resume
+                    startForegroundService()
                     Toast.makeText(this, "Resume Service", Toast.LENGTH_LONG).show()
                 }
             }
@@ -88,11 +91,16 @@ class TrackingService : LifecycleService() {
             }
             Constants.SERVICE_ACTION_PAUSE -> {
                 Timber.d("Pause Service")
+                pauseService()
             }
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
+
+    private fun pauseService(){
+        isTracking.postValue(false)
+    }
     /***
      * for every new path on start/resume the track and the service
      * you must add new emptyMutableList to add the coordinates later on it.
@@ -139,7 +147,7 @@ class TrackingService : LifecycleService() {
              * if we move from place to another (updated location) ,
              * but we stop the tracking service ( we don't want to track the location )
              */
-            if (isStartTracking.value!!) {
+            if (isTracking.value!!) {
                 println("NEW FUCKING LOCATION ::: Start Collecting the Location Callback")
                 result.locations.let { locations ->
                     if (locations.isEmpty()) {
@@ -190,7 +198,7 @@ class TrackingService : LifecycleService() {
 
         // Start Or Resume the Service
         addNewEmptyPolyline()
-        isStartTracking.postValue(true)
+        isTracking.postValue(true)
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

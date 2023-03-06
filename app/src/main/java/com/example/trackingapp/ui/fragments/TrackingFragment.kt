@@ -59,7 +59,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
     }
 
     private fun observeOnService() {
-        TrackingService.isStartTracking.observe(viewLifecycleOwner){
+        TrackingService.isTracking.observe(viewLifecycleOwner){
             updateTrackingViewButtons(it)
         }
 
